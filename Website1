@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biofoam — Nature’s Packaging, Redefined</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f2eb;
+            color: #1e2e1e;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: #2d5e3b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Bokeh background */
+        .bokeh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bokeh-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            filter: blur(40px);
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 245, 0.92);
+            backdrop-filter: blur(12px);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d5e3b;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #2d5e3b;
+            font-weight: 500;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #5e3e2b;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #5e3e2b;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)),
+            url('https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+            color: white;
+            padding: 140px 20px;
+            text-align: center;
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 650px;
+            text-shadow: 1px 1px 8px rgba(0,0,0,0.6);
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            background: #2d5e3b;
+            color: white;
+            padding: 14px 34px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #5e3e2b;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 50px;
+            color: #4a5a4a;
+            font-size: 1.1rem;
+        }
+
+        /* Cards */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            border-top: 5px solid #8fc97c;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+            color: #3b5e3b;
+        }
+
+        /* Stats & Charts */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+        }
+
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #2d5e3b;
+            margin: 10px 0;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-top: 40px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            gap: 5px;
+            margin: 20px 0 10px;
+        }
+
+        .bar {
+            width: 70px;
+            background: #2d5e3b;
+            border-radius: 8px 8px 0 0;
+            color: white;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-weight: 600;
+            transition: height 0.8s ease;
+            position: relative;
+        }
+
+        .bar-label {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #555;
+            margin-top: 6px;
+        }
+
+        /* Science section */
+        .science-bg {
+            background: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;
+            position: relative;
+        }
+
+        .science-overlay {
+            background: rgba(255, 255, 245, 0.9);
+            padding: 80px 0;
+        }
+
+        .bio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .bio-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+        }
+
+        .bio-card img {
+            width: 60px;
+            margin-bottom: 15px;
+        }
+
+        .bio-card h4 {
+            color: #3b5e3b;
+            margin-bottom: 10px;
+        }
+
+        /* Catalogue */
+        .catalogue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+        }
+
+        .product-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-info h3 {
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .price {
+            color: #2d5e3b;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+
+        .badge-eco {
+            background: #c8e6c9;
+            color: #2e4a2e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        /* Team */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .team-member img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #8fc97c;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        .team-member img:hover {
+            transform: scale(1.05);
+            border-color: #5e3e2b;
+        }
+
+        .team-member h4 {
+            color: #2d5e3b;
+            margin: 8px 0 4px;
+        }
+
+        /* Decor */
+        .decor-leaf {
+            position: absolute;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .leaf-left {
+            top: 60px;
+            left: -40px;
+            width: 250px;
+            transform: rotate(15deg);
+        }
+
+        .leaf-right {
+            bottom: 80px;
+            right: -60px;
+            width: 300px;
+            transform: rotate(-10deg);
+        }
+
+        /* Footer */
+        footer {
+            background: #1e2e1e;
+            color: #ccc;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .nav-links {
+                gap: 15px;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bokeh Effect -->
+    <div class="bokeh-bg">
+        <div class="bokeh-circle" style="width:350px;height:350px;top:5%;left:3%"></div>
+        <div class="bokeh-circle" style="width:400px;height:400px;bottom:2%;right:2%;background:rgba(180,220,180,0.2)"></div>
+        <div class="bokeh-circle" style="width:250px;height:250px;top:55%;left:25%;background:rgba(200,230,200,0.25)"></div>
+        <div class="bokeh-circle" style="width:300px;height:300px;bottom:15%;left:15%;background:rgba(255,245,200,0.18)"></div>
+    </div>
+
+    <!-- Decorative Leaves -->
+    <svg class="decor-leaf leaf-left" viewBox="0 0 200 200">
+        <path d="M100 20 C60 50 20 80 20 130 C20 170 60 190 100 180 C140 190 180 170 180 130 C180 80 140 50 100 20Z" fill="#4a7c59" />
+    </svg>
+    <svg class="decor-leaf leaf-right" viewBox="0 0 300 300">
+        <path d="M150 30 C90 70 30 120 30 190 C30 250 90 280 150 260 C210 280 270 250 270 190 C270 120 210 70 150 30Z" fill="#4a7c59" />
+    </svg>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                Biofoam–EcoBuddies
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#science">Science</a></li>
+                    <li><a href="#stats">Stats</a></li>
+                    <li><a href="#catalogue">Catalogue</a></li>
+                    <li><a href="#team">Team</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section id="home" class="hero">
+        <h1>Nature's Packaging,<br>Redefined.</h1>
+        <p>
+            Biofoam — the 100% biodegradable alternative to styrofoam, grown from water hyacinth, mycelium, beeswax, and rice husk.
+        </p>
+        <a href="#about" class="btn">Discover Our Mission</a>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">Why Biofoam?</h2>
+            <p class="section-subtitle">
+                A natural packaging revolution born from the urgent need to replace petroleum‑based styrofoam that chokes our planet.
+            </p>
+            <div class="grid-3">
+                <div class="card">
+                    <h3>📦 What is Biofoam?</h3>
+                    <p>
+                        Biofoam is a 100% home‑compostable packaging material with the same protective qualities as styrofoam – but made entirely from plants and agricultural waste. It naturally decomposes within weeks, not centuries.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>⚠️ Why It's Needed</h3>
+                    <p>
+                        Over 14 million tons of plastic end up in oceans yearly. Styrofoam (EPS) takes 500+ years to degrade, breaking into microplastics that enter our food chain. Biofoam offers a circular, non‑toxic end‑of‑life.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>🎯 Target & Purpose</h3>
+                    <p>
+                        Designed for eco‑conscious businesses: electronics packaging, food delivery containers, fragile item shippers. We aim to replace single‑use protective foam in e‑commerce and retail by 2030.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Science -->
+    <section id="science" class="science-bg">
+        <div class="science-overlay">
+            <div class="container">
+                <h2 class="section-title">🔬 Biological Foundation</h2>
+                <p class="section-subtitle">
+                    Biofoam is alive – literally. Our material grows from four natural ingredients, bound by mycelium, the root network of fungi.
+                </p>
+                <div class="bio-grid">
+                    <div class="bio-card">
+                        <a href="https://imgbb.com/"><img src="https://i.ibb.co.com/HfNLb1hH/IMG-0068.jpg" alt="IMG 0068" border="0"></a>
+                        <h4>Water Hyacinth</h4>
+                        <p>
+                            Invasive aquatic plant, harvested to restore waterways. Its fibrous structure gives Biofoam cushioning strength.
+                        </p>
+                    </div>
+                    <div class="bio-card">
+                        <img src="https://img.icons8.com/color/96/mushroom.png" alt="Mycelium">
+                        <h4>Mycelium</h4>
+                        <p>
+                            Fungi root network acts as a natural glue, binding plant matter without chemicals into a solid foam‑like matrix.
+                        </p>
+                    </div>
+                    <div class="bio-card">
+                        <img src="https://img.icons8.com/color/96/bee.png" alt="Beeswax">
+                        <h4>Beeswax</h4>
+                        <p>
+                            Natural water‑resistant coating that repels moisture without plastic, yet remains fully biodegradable.
+                        </p>
+                    </div>
+                    <div class="bio-card">
+                        <img src="https://img.icons8.com/color/96/rice-bowl.png" alt="Rice husk">
+                        <h4>Rice Husk</h4>
+                        <p>
+                            Abundant agricultural byproduct adds rigidity and texture, replacing synthetic fillers completely.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics (Plastic Crisis) -->
+    <section id="stats">
+        <div class="container">
+            <h2 class="section-title">📊 The Plastic Crisis by Numbers</h2>
+            <p class="section-subtitle">
+                Click the button below to reveal the staggering reality of plastic pollution.
+            </p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p>
+                        Annual plastic production
+                    </p>
+                    <div class="stat-number">
+                        400M
+                    </div>
+                    <p>
+                        tons
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <p>
+                        Plastic in oceans yearly
+                    </p>
+                    <div class="stat-number">
+                        14M
+                    </div>
+                    <p>
+                        tons
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <p>
+                        Styrofoam decomposition
+                    </p>
+                    <div class="stat-number">
+                        500+
+                    </div>
+                    <p>
+                        years
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <p>
+                        Marine animals killed
+                    </p>
+                    <div class="stat-number">
+                        100K
+                    </div>
+                    <p>
+                        per year
+                    </p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <h3 style="text-align:center; margin-bottom:20px">Plastic Waste by Sector (million tons)</h3>
+                <div class="bar-chart" id="barChart">
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                        <div class="bar" data-height="140">
+                            140
+                        </div>
+                        <div class="bar-label">
+                            Packaging
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                        <div class="bar" data-height="60">
+                            60
+                        </div>
+                        <div class="bar-label">
+                            Textiles
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                        <div class="bar" data-height="45">
+                            45
+                        </div>
+                        <div class="bar-label">
+                            Consumer
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                        <div class="bar" data-height="30">
+                            30
+                        </div>
+                        <div class="bar-label">
+                            Transport
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                        <div class="bar" data-height="25">
+                            25
+                        </div>
+                        <div class="bar-label">
+                            Building
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align:center; margin-top:10px; font-style:italic">
+                    Source: UNEP, 2023
+                </p>
+                <button class="btn" id="animateChart" style="display:block; margin:20px auto 0">Animate Char
+                </button>
+                <div id="videoContainer" style="display:none; margin-top:30px; text-align:center;">
+                    <div style="position:relative; width:100%; padding-bottom:56.25%; border-radius:20px; overflow:hidden; box-shadow:0 15px 30px rgba(0,0,0,0.1);">
+                        <iframe id="natureVideo" 
+                            src="" 
+                            allow="fullscreen; autoplay" 
+                            allowfullscreen 
+                            width="100%" 
+                            height="100%" 
+                            style="position:absolute; left:0; top:0; border:none;">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalogue -->
+    <section id="catalogue">
+        <div class="container">
+            <h2 class="section-title">Biofoam Catalogue</h2>
+            <p class="section-subtitle">
+                Explore our range of home‑compostable packaging solutions. Custom molds available for your brand.
+            </p>
+            <div class="catalogue-grid">
+                <div class="product-card">
+                    <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=60')"></div>
+                    <div class="product-info">
+                        <h3>Protective Mailer Insert</h3>
+                        <p>
+                            Custom‑fit cushions for electronics and fragile goods.
+                        </p>
+                        <p class="price">
+                            .45 / unit
+                        </p>
+                        <span class="badge-eco">🌱 Compostable</span>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=60')"></div>
+                    <div class="product-info">
+                        <h3>Food Container</h3>
+                        <p>
+                            Leak‑resistant, insulated takeaway box. Beeswax‑lined.
+                        </p>
+                        <p class="price">
+                            .32 / unit (bulk)
+                        </p>
+                        <span class="badge-eco">🍃 Home Compost</span>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1607344645869-9b1e6e9c6e5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=60')"></div>
+                    <div class="product-info">
+                        <h3>Corner Protectors</h3>
+                        <p>
+                            For furniture and heavy items. Shock‑absorbing mycelium foam.
+                        </p>
+                        <p class="price">
+                            .28 / piece
+                        </p>
+                        <span class="badge-eco">♻️ Zero Waste</span>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1584267385494-9fdd9a2f7c9e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=60')"></div>
+                    <div class="product-info">
+                        <h3>Grow‑Your‑Own Kit</h3>
+                        <p>
+                            DIY Biofoam kit for schools and makers. Includes mold & spores.
+                        </p>
+                        <p class="price">
+                            .99 / kit
+                        </p>
+                        <span class="badge-eco">🧪 Educational</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section id="team">
+        <div class="container">
+            <h2 class="section-title">Meet the Team!</h2>
+            <p class="section-subtitle">
+                A passionate group of science and economy students committed to reducing plastic pollution.
+            </p>
+                <div class="team-grid">
+                <div class="team-member">
+                    <a href="https://ibb.co.com/vCMd7V6k"><img src="https://i.ibb.co.com/6cqt3r7F/cbf5d3f9-c5ab-417e-9724-a32a06926160.jpg" alt="cbf5d3f9-c5ab-417e-9724-a32a06926160" border="0"></a>
+                    <h4>Ezekiel Yunalov Kyosev</h4>
+                    <p>
+                        Team Leader
+                    </p>
+                </div>
+                <div class="team-member">
+                    <a href="https://ibb.co.com/KxyN1rR1"><img src="https://i.ibb.co.com/wh6Jvz3v/1fec9727-ed28-49d9-8aec-47ec9959c690.jpg" alt="1fec9727-ed28-49d9-8aec-47ec9959c690" border="0"></a>
+                    <h4>Saemo Nicholas Kamoyaki
+                    </h4>
+                    <p>
+                        Vice Leader
+                    </p>
+                </div>
+                <div class="team-member">
+                    <a href="https://ibb.co.com/nsF452Sm"><img src="https://i.ibb.co.com/xSNwRvQL/IMG-1918.jpg" alt="IMG-1918" border="0"></a>
+                    <h4>MCMoriel Juan Maazya</h4>
+                    <p>
+                        Designer and Source Distributor
+                    </p>
+                </div>
+                <div class="team-member">
+                    <a href="https://ibb.co.com/XZd4p98M"><img src="https://i.ibb.co.com/qM4n9z5V/IMG-3505.jpg" alt="IMG-3505" border="0"></a>
+                    <h4>Lexandra Aniela Luijie</h4>
+                    <p>
+                        Docummentation, Treasurer, and Public Relations
+                    </p>
+                </div>
+                <div class="team-member">
+                   <a href="https://ibb.co.com/zH6Yqx3g"><img src="https://i.ibb.co.com/R4jmRbXK/IMG-9050.jpg" alt="IMG-9050" border="0"></a>
+                   <h4>William Vincitore Candra Putra</h4>
+                   <p>
+                       Market and Website Design
+                   </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="supervisor" style="background: #f9f6ef; padding: 60px 0;">
+        <div class="container">
+            <h2 class="section-title" style="color:#2d5e3b;">Our Supervisor!</h2>
+            <p class="section-subtitle">Teacher in Biology Studies of Regina Pacis Bogor Highschool committed to assist and supervise our project.</p>
+            <div class="team-grid">
+                <div class="team-member">
+                    <a href="https://ibb.co.com/Fb6yhQT4"><img src="https://i.ibb.co.com/6RYTyKC0/fca1a501-5c4b-4e91-8ed4-95a0b369d3ae.jpg" alt="fca1a501-5c4b-4e91-8ed4-95a0b369d3ae" border="0"></a>
+                    <h4>Ardelia Puspita Dewi</h4>
+                    <p>Biology Education, UKI</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>
+                © 2026 EcoBuddies – Grown, not manufactured. | Designed for a cleaner tomorrow.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Animate chart bars on click
+        document.getElementById('animateChart').addEventListener('click', function() {
+            // ... animasi grafik tetap sama ...
+        
+            const videoContainer = document.getElementById('videoContainer');
+            const natureVideo = document.getElementById('natureVideo');
+        
+            // Gunakan embed Streamable dengan ID 47i6uk
+            natureVideo.src = 'https://streamable.com/e/47i6uk?autoplay=1';
+            
+            videoContainer.style.display = 'block';
+            videoContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    </script>
+</body>
+</html>
